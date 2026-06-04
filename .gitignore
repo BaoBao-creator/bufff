@@ -1,0 +1,15 @@
+# Loại bỏ các thư mục tạm và cache
+.gradle/
+.gradle-project-cache/
+.gradle-user/
+.gradle-user-home/
+.java-prefs/
+.vscode/
+build/
+logs/
+run/
+
+# Loại bỏ các file thực thi của Gradle (nếu bạn không muốn up)
+gradlew
+gradlew.bat
+gradle/
