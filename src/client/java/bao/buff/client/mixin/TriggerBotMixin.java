@@ -30,7 +30,7 @@ public class TriggerBotMixin {
 
         if (!Config.ignoreCooldown && player.getAttackStrengthScale(0.0f) < 1.0f) return;
 
-        Entity target = getLatentTarget(3.35D);
+        Entity target = getLatentTarget(3.0D + Config.triggerBotExtraReach);
 
         if (target instanceof LivingEntity living && living.isAlive() && target != player) {
             gameMode.attack(player, target);
@@ -82,7 +82,7 @@ public class TriggerBotMixin {
                 continue; 
             }
 
-            double dynamicReach = 3.0D; 
+            double dynamicReach = entityMaxReach;
             if (connection != null) {
                 var localPlayerInfo = connection.getPlayerInfo(player.getUUID());
                 if (localPlayerInfo != null) {
@@ -102,7 +102,7 @@ public class TriggerBotMixin {
                         if (relativeForwardSpeedPerTick > 0.0D) {
                             double relativeSpeedSeconds = Math.min(6.5D, relativeForwardSpeedPerTick * 20.0D);
                             double networkCompensation = (playerPing / 1000.0D) * relativeSpeedSeconds;
-                            dynamicReach = Math.min(entityMaxReach, 3.0D + networkCompensation);
+                            dynamicReach = Math.min(entityMaxReach, dynamicReach + networkCompensation);
                         }
                     }
                 }
