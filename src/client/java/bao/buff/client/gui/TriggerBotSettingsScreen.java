@@ -2,6 +2,7 @@ package bao.buff.client.gui;
 
 import bao.buff.client.Config;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -31,6 +32,30 @@ public class TriggerBotSettingsScreen extends Screen {
             button.setMessage(getModeLabel());
         }).bounds(centerX, centerY + 30, 200, 20).build());
 
+        this.addRenderableWidget(new AbstractSliderButton(
+            centerX,
+            centerY + 60,
+            200,
+            20,
+            getReachLabel(),
+            Config.triggerBotExtraReach
+        ) {
+            {
+                updateMessage();
+            }
+
+            @Override
+            protected void updateMessage() {
+                setMessage(getReachLabel());
+            }
+
+            @Override
+            protected void applyValue() {
+                Config.triggerBotExtraReach = this.value;
+                Config.save();
+            }
+        });
+
         this.addRenderableWidget(Button.builder(Component.literal("Back"), button -> {
             this.minecraft.setScreen(lastScreen);
         }).bounds(centerX, this.height - 40, 200, 20).build());
@@ -38,6 +63,11 @@ public class TriggerBotSettingsScreen extends Screen {
 
     private Component getToggleLabel() {
         return Component.literal("Trigger Bot: " + (Config.triggerBot ? "§aON" : "§cOFF"));
+    }
+
+    private Component getReachLabel() {
+        int extraCentimeters = (int) Math.round(Config.triggerBotExtraReach * 100.0D);
+        return Component.literal("Max Reach: §a" + Config.getTriggerBotReachName() + " blocks §7(+" + extraCentimeters + "cm)");
     }
 
     private Component getModeLabel() {
