@@ -21,6 +21,8 @@ public class Config {
     public static final int ATTRIBUTE_SWAP_MODE_BREACH = 1;
     public static final int ATTRIBUTE_SWAP_MODE_WIND = 2;
     public static final int ATTRIBUTE_SWAP_MODE_SMART = 3;
+    public static final double TRIGGER_BOT_REACH_MIN = 3.0D;
+    public static final double TRIGGER_BOT_REACH_MAX = 6.0D;
 
     public static boolean smallItemEnabled = true;
     public static double itemScale = 0.6;
@@ -30,6 +32,7 @@ public class Config {
     public static boolean breakShield = false;
     public static boolean triggerBot = false;
     public static boolean ignoreCooldown = false;
+    public static double triggerBotReach = 3.35D;
     public static boolean strongholdTrackerEnabled = false;
     public static boolean spearLungeEnabled = false;
 
@@ -79,6 +82,10 @@ public class Config {
 
     public static String getTriggerBotModeName() {
         return ignoreCooldown ? "Spam Click (1 tick)" : "Check Cooldown";
+    }
+
+    public static String getTriggerBotReachName() {
+        return String.format(java.util.Locale.ROOT, "%.2f blocks", triggerBotReach);
     }
 
     public static String getSpearLungeStatusName() {
@@ -145,6 +152,9 @@ public class Config {
         if (data.ignoreCooldown != null) {
             ignoreCooldown = data.ignoreCooldown;
         }
+        if (data.triggerBotReach != null) {
+            triggerBotReach = data.triggerBotReach;
+        }
         if (data.strongholdTrackerEnabled != null) {
             strongholdTrackerEnabled = data.strongholdTrackerEnabled;
         }
@@ -164,6 +174,7 @@ public class Config {
         data.breakShield = breakShield;
         data.triggerBot = triggerBot;
         data.ignoreCooldown = ignoreCooldown;
+        data.triggerBotReach = triggerBotReach;
         data.strongholdTrackerEnabled = strongholdTrackerEnabled;
         data.spearLungeEnabled = spearLungeEnabled;
         return data;
@@ -171,6 +182,7 @@ public class Config {
 
     private static void normalize() {
         itemScale = Math.max(0.0, Math.min(1.0, itemScale));
+        triggerBotReach = Math.max(TRIGGER_BOT_REACH_MIN, Math.min(TRIGGER_BOT_REACH_MAX, triggerBotReach));
 
         int enabledModes = 0;
         if (swapBreachMace) {
@@ -210,6 +222,7 @@ public class Config {
         private Boolean breakShield;
         private Boolean triggerBot;
         private Boolean ignoreCooldown;
+        private Double triggerBotReach;
         private Boolean strongholdTrackerEnabled;
         private Boolean spearLungeEnabled;
     }
