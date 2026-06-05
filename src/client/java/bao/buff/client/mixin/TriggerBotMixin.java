@@ -32,10 +32,26 @@ public class TriggerBotMixin {
 
         Entity target = getLatentTarget(Config.triggerBotReach);
 
-        if (target instanceof LivingEntity living && living.isAlive() && target != player) {
+        if (target instanceof LivingEntity living && isValidAttackTarget(living) && isWithinAttackRange(living)) {
+            if (player.isUsingItem()) {
+                gameMode.releaseUsingItem(player);
+            }
+
             gameMode.attack(player, target);
             player.swing(InteractionHand.MAIN_HAND);
         }
+    }
+
+    private boolean isValidAttackTarget(LivingEntity entity) {
+        return entity != null
+                && entity.isAlive()
+                && entity != player
+                && entity.isPickable()
+                && entity.isAttackable();
+    }
+
+    private boolean isWithinAttackRange(LivingEntity entity) {
+        return player != null && player.isWithinAttackRange(entity.getBoundingBox(), 0.0D);
     }
 
     private Entity getLatentTarget(double baseMaxReach) {
@@ -56,7 +72,7 @@ public class TriggerBotMixin {
         AABB searchBox = player.getBoundingBox().expandTowards(viewVector.scale(currentMaxReach)).inflate(0.5D); 
         List<LivingEntity> livingEntities = player.level().getEntitiesOfClass(
                 LivingEntity.class, searchBox,
-                entity -> entity != null && entity.isAlive() && entity != player && entity.isPickable()
+                this::isValidAttackTarget
         );
 
         Entity closestTarget = null;
@@ -66,6 +82,10 @@ public class TriggerBotMixin {
         var connection = mc.getConnection();
 
         for (LivingEntity living : livingEntities) {
+            if (!isWithinAttackRange(living)) {
+                continue;
+            }
+
             double entityMaxReach = (living instanceof Player) ? currentMaxReach : Math.min(3.0D, currentMaxReach);
             double currentLimit = Math.min(closestDistance, entityMaxReach);
 
